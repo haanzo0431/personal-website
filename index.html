@@ -60,20 +60,6 @@
         <a href="https://x.com/obbxvxt_ur" target="_blank">X</a>
     </footer>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            // Assuming local time for Uzbekistan
-            const timeString = now.toLocaleTimeString('en-US', { 
-                timeZone: 'Asia/Tashkent', 
-                hour: 'numeric', 
-                minute: '2-digit', 
-                hour12: true 
-            });
-            document.getElementById('live-time').innerText = timeString;
-        }
-        updateClock();
-        setInterval(updateClock, 60000); // update every minute
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
