@@ -4,27 +4,144 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Behruz — Gaming Log</title>
-        <link rel="icon" type="image/jpeg" href="transparent one.png">
-
+    <link rel="icon" type="image/jpeg" href="transparent one.png">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Page-specific styles for gaming */
-        li { 
-            margin-bottom: 2.5rem; 
-            display: flex; 
+        /* --- GAMING WHEEL STYLES --- */
+        .gaming-container {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            height: 350px;
+            margin-top: 2rem;
+            perspective: 1000px; /* Gives the 3D curve depth */
+        }
+
+        /* The Left Side: The Wheel */
+        .wheel-picker {
+            position: relative;
+            width: 40%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* The Middle Indicator Line */
+        .wheel-indicator {
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background-color: var(--text-main);
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .wheel-item {
+            position: absolute;
+            right: 2rem;
+            width: 100%;
+            text-align: right;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            pointer-events: none;
+            transform-origin: right center;
+        }
+
+        /* The 3 Visible States */
+        .wheel-item.active {
+            opacity: 1;
+            transform: translateY(0) scale(1.1);
+            filter: blur(0);
+            color: var(--text-main);
+            pointer-events: auto;
+        }
+
+        .wheel-item.prev {
+            opacity: 0.4;
+            transform: translateY(-60px) scale(0.9) rotateX(25deg);
+            filter: blur(3px);
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .wheel-item.next {
+            opacity: 0.4;
+            transform: translateY(60px) scale(0.9) rotateX(-25deg);
+            filter: blur(3px);
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        /* The Right Side: Game Details */
+        .game-info-panel {
+            width: 60%;
+            display: flex;
             flex-direction: column;
         }
 
-        .game-title {
-            font-weight: 500;
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: 600;
             color: var(--text-main);
-            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            transition: opacity 0.3s ease;
         }
 
-        .game-desc {
+        .info-meta {
+            font-size: 0.9rem;
             color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 0.2rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-rating {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .info-summary {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .gaming-container {
+                flex-direction: column;
+                height: auto;
+                gap: 2rem;
+            }
+            .wheel-picker {
+                width: 100%;
+                height: 250px;
+                border-right: none;
+                border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+            }
+            .wheel-indicator {
+                top: auto;
+                bottom: -2px;
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                width: 24px;
+                height: 3px;
+            }
+            .wheel-item {
+                right: 0;
+                text-align: center;
+                transform-origin: center bottom;
+            }
+            .game-info-panel { width: 100%; }
         }
     </style>
 </head>
@@ -48,48 +165,20 @@
 
     <main class="fade-in" style="animation-delay: 0.15s;">
         <h2>Game Library</h2>
-        <ul>
-            <li>
-                <span class="game-title">Counter-Strike 1.6</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Dark Souls 1 & 2</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">The Legend of Zelda: Breath of the Wild</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Blasphemous 1</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Call of Duty 4: Modern Warfare & MW2</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Call of Duty: Black Ops 1</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Call of Duty: World at War</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Medal of Honor (2010)</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Assassin's Creed 1</span>
-                <span class="game-desc"></span>
-            </li>
-            <li>
-                <span class="game-title">Assassin's Creed: Brotherhood</span>
-                <span class="game-desc"></span>
-            </li>
-        </ul>
+        
+        <div class="gaming-container">
+            <div class="wheel-picker" id="wheel">
+                <div class="wheel-indicator"></div>
+                </div>
+
+            <div class="game-info-panel">
+                <div class="info-title" id="display-title">Title</div>
+                <div class="info-meta">
+                    <span id="display-company">Company</span> • Rating: <span class="info-rating" id="display-rating">0/10</span>
+                </div>
+                <div class="info-summary" id="display-summary">Summary goes here...</div>
+            </div>
+        </div>
     </main>
 
     <footer class="fade-in" style="animation-delay: 0.3s;">
@@ -98,5 +187,110 @@
         <a href="https://www.linkedin.com/in/behruz-o-ktamboyev-50b686413" target="_blank">LinkedIn</a>
         <a href="https://x.com/obbxvxt_ur" target="_blank">X</a>
     </footer>
+
+    <script>
+        // --- YOUR GAME DATA ---
+        // Fill in your reflections, ratings, and companies here.
+        const games = [
+            { 
+                title: "Counter-Strike 1.6", 
+                company: "Valve", 
+                rating: "9/10", 
+                summary: "The foundational competitive tactical shooter that started it all. I spent countless hours mastering the map layouts and recoil patterns. It's raw, unfiltered gameplay that doesn't rely on modern gimmicks. The community servers were legendary and shaped my early online gaming experience." 
+            },
+            { 
+                title: "Dark Souls 1 & 2", 
+                company: "FromSoftware", 
+                rating: "10/10", 
+                summary: "A masterclass in punishing but rewarding level design. It taught me patience and that failure is just a step toward success. The atmosphere is unmatched, and every victory feels genuinely earned. These games completely rewired how I approach difficult challenges in life." 
+            },
+            { title: "Zelda: Breath of the Wild", company: "Nintendo", rating: "10/10", summary: "Redefining exploration and open-world freedom. If you see a mountain, you can climb it. Pure adventure." },
+            { title: "Blasphemous 1", company: "The Game Kitchen", rating: "8/10", summary: "A brutal metroidvania draped in dark, religious iconography. Visually stunning with tight combat mechanics." },
+            { title: "CoD 4: Modern Warfare & MW2", company: "Infinity Ward", rating: "9/10", summary: "The multiplayer revolution that changed FPS forever. Fast, frenetic, and the peak of arcade shooters." },
+            { title: "Call of Duty: Black Ops 1", company: "Treyarch", rating: "9/10", summary: "The numbers, Mason. What do they mean? The best campaign in the entire franchise hands down." },
+            { title: "Call of Duty: World at War", company: "Treyarch", rating: "8/10", summary: "A gritty, unforgiving look at the WWII theater. The introduction of zombies was a cultural reset." },
+            { title: "Medal of Honor (2010)", company: "Danger Close", rating: "7/10", summary: "A grounded and underrated modern military narrative. It felt a lot more authentic than its competitors at the time." },
+            { title: "Assassin's Creed 1", company: "Ubisoft", rating: "8/10", summary: "The birth of the animus and the hidden blade. A repetitive but incredibly atmospheric entry that started an empire." },
+            { title: "Assassin's Creed: Brotherhood", company: "Ubisoft", rating: "9/10", summary: "Ezio's peak and the perfection of the AC formula. Building up Rome and calling in assassins is still unmatched." }
+        ];
+
+        // --- WHEEL LOGIC ---
+        let activeIndex = 0;
+        let isScrolling = false;
+        
+        const wheelContainer = document.getElementById('wheel');
+        const dTitle = document.getElementById('display-title');
+        const dCompany = document.getElementById('display-company');
+        const dRating = document.getElementById('display-rating');
+        const dSummary = document.getElementById('display-summary');
+
+        // Build the HTML for the wheel items
+        games.forEach((game, index) => {
+            const item = document.createElement('div');
+            item.className = 'wheel-item';
+            item.innerText = game.title;
+            
+            // Allow clicking on top/bottom items to snap to them
+            item.addEventListener('click', () => {
+                if (index === activeIndex - 1 || index === activeIndex + 1) {
+                    activeIndex = index;
+                    updateWheel();
+                }
+            });
+
+            wheelContainer.appendChild(item);
+        });
+
+        const wheelItems = document.querySelectorAll('.wheel-item');
+
+        function updateWheel() {
+            // Update CSS classes for the wheel
+            wheelItems.forEach((item, index) => {
+                item.className = 'wheel-item'; // Reset classes
+                if (index === activeIndex) {
+                    item.classList.add('active');
+                } else if (index === activeIndex - 1) {
+                    item.classList.add('prev');
+                } else if (index === activeIndex + 1) {
+                    item.classList.add('next');
+                }
+            });
+
+            // Fade out text, update content, fade back in
+            dTitle.style.opacity = 0;
+            dSummary.style.opacity = 0;
+            
+            setTimeout(() => {
+                dTitle.innerText = games[activeIndex].title;
+                dCompany.innerText = games[activeIndex].company;
+                dRating.innerText = games[activeIndex].rating;
+                dSummary.innerText = games[activeIndex].summary;
+                
+                dTitle.style.opacity = 1;
+                dSummary.style.opacity = 1;
+            }, 150);
+        }
+
+        // Handle Mouse Scroll
+        wheelContainer.addEventListener('wheel', (e) => {
+            e.preventDefault(); // Stop entire page from scrolling
+            if (isScrolling) return;
+
+            if (e.deltaY > 0 && activeIndex < games.length - 1) {
+                activeIndex++; // Scroll down
+            } else if (e.deltaY < 0 && activeIndex > 0) {
+                activeIndex--; // Scroll up
+            }
+
+            updateWheel();
+            
+            // Throttle scrolling to make it snap cleanly
+            isScrolling = true;
+            setTimeout(() => { isScrolling = false; }, 400);
+        });
+
+        // Initialize the first load
+        updateWheel();
+    </script>
 </body>
 </html>
