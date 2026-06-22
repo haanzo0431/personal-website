@@ -24,16 +24,22 @@
     </style>
 </head>
 <body>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+
     <header class="fade-in" style="animation-delay: 0s;">
         <div class="logo-group">
-            <img src="20251214_205854(1).jpg">
+            <img src="my photo.png" alt="My Photo">
             <div class="logo-text-group">
                 <a href="index.html" class="logo">Behruz</a>
                 <span class="alias">alias: Miles</span>
             </div>
         </div>
         <nav>
-            <a href="index.html" class="active">home</a>
+            <a href="index.html">home</a>
             <a href="essays.html">essays</a>
             <a href="projects.html">projects</a>
             <a href="gaming.html">gaming</a>
@@ -58,6 +64,9 @@
         <a href="https://t.me/MichaeelKaiserr" target="_blank">Telegram</a>
         <a href="https://www.linkedin.com/in/behruz-o-ktamboyev-50b686413" target="_blank">LinkedIn</a>
         <a href="https://x.com/obbxvxt_ur" target="_blank">X</a>
+        <button id="theme-toggle" style="cursor: pointer; background: none; border: none; font-size: 1.2rem;">
+    🌙
+</button>
     </footer>
 
     <script src="app.js"></script>

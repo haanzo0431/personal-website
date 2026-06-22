@@ -152,3 +152,55 @@ if (wheelContainer) {
 
     updateWheel();
 }
+
+const toggleBtn = document.getElementById('theme-toggle');
+const body = document.body;
+
+// Check for saved user preference
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme === 'dark') {
+    body.classList.add('dark-mode');
+    toggleBtn.innerText = '☀️';
+}
+
+toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    
+    // Save preference
+    if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        toggleBtn.innerText = '☀️';
+    } else {
+        localStorage.setItem('theme', 'light');
+        toggleBtn.innerText = '🌙';
+    }
+});
+
+// Run this code as soon as the HTML has fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Get the current URL path
+    const currentPath = window.location.pathname;
+    
+    // 2. Extract just the file name (e.g., 'essays.html')
+    let currentPage = currentPath.split('/').pop();
+
+    // 3. Fallback: If it's just the root domain (e.g., yoursite.com/), default to index.html
+    if (currentPage === '' || currentPage === '/') {
+        currentPage = 'index.html';
+    }
+
+    // 4. Select all the links inside your navigation
+    const navLinks = document.querySelectorAll('nav a');
+
+    // 5. Loop through them and apply the active class where it matches
+    navLinks.forEach(link => {
+        // Strip any existing active classes (just in case they were left in the HTML)
+        link.classList.remove('active');
+
+        // Check if the link's href matches our current page variable
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
+});
